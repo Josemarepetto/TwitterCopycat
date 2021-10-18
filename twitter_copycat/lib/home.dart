@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
   }
 
   List<Widget> screens = [
-    new Tweets(),
+    new TweetsScreen(),
   ];
 
   Widget bottomNavBar() {
