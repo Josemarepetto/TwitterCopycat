@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter_copycat/models/tweet.dart';
 
-class Tweets extends StatefulWidget {
-  Tweets({Key? key}) : super(key: key);
+class TweetsScreen extends StatefulWidget {
+  TweetsScreen({Key? key}) : super(key: key);
 
   @override
   _TweetsState createState() => _TweetsState();
 }
 
-class _TweetsState extends State<Tweets> {
+class _TweetsState extends State<TweetsScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(12.0),
+      padding: EdgeInsets.symmetric(horizontal: 12.0),
       child: ListView.builder(
         itemCount: tweets.length,
         itemBuilder: (context, i) => new Column(

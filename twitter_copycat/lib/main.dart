@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_copycat/home.dart';
+import 'package:twitter_copycat/screens/login.dart';
 
 void main() {
   runApp(Twitter());
@@ -18,7 +19,8 @@ class Twitter extends StatelessWidget {
         floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: new Color.fromRGBO(56, 161, 243, 1)),
       ),
-      home: Home(),
+      // home: Home(),
+      home: LoginScreen(),
     );
   }
 }
