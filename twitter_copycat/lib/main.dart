@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_copycat/home.dart';
 import 'package:twitter_copycat/screens/login.dart';
+import 'package:twitter_copycat/screens/register.dart';
 
 void main() {
   runApp(Twitter());
@@ -20,7 +21,8 @@ class Twitter extends StatelessWidget {
             backgroundColor: new Color.fromRGBO(56, 161, 243, 1)),
       ),
       // home: Home(),
-      home: LoginScreen(),
+      // home: LoginScreen(),
+      home: InitialScreen(0),
     );
   }
 }
