@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter_copycat/screens/util/passwdtextfield.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+// ignore: must_be_immutable
+class LoginScreen extends StatefulWidget {
+  //const LoginScreen({Key? key}) : super(key: key);
+  var selectedPageIndex;
+  LoginScreen(this.selectedPageIndex);
 
+  TextEditingController passController = new TextEditingController();
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  var selectedPageIndex = 0;
+  TextEditingController passController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     AppBar appBar = new AppBar(
@@ -13,7 +26,9 @@ class LoginScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
             icon: Icon(
               Icons.close,
               color: new Color.fromRGBO(56, 161, 243, 1),
@@ -65,7 +80,11 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    print(selectedPageIndex);
+                    selectedPageIndex = 1;
+                    setState(() {});
+                  },
                   child: Text(
                     'Next',
                     style: TextStyle(
@@ -79,44 +98,95 @@ class LoginScreen extends StatelessWidget {
       );
     }
 
+    List<Widget> screens = [new UsernameScreen(), new PasswordScreen()];
+
     return SafeArea(
       child: Scaffold(
         appBar: appBar,
-        body: Container(
-          alignment: Alignment.center,
-          color: Colors.black,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
-                child: Text(
-                  'To get started, first enter your phone, email, or @username',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 27.0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Phone, email, or username',
-                    hintStyle: TextStyle(color: Colors.white, fontSize: 17.0),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        body: screens.elementAt(selectedPageIndex),
         bottomNavigationBar: bottomNavBar(),
+      ),
+    );
+  }
+}
+
+class UsernameScreen extends StatelessWidget {
+  const UsernameScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+            child: Text(
+              'To get started, first enter your phone, email, or @username',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 27.0,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+            child: TextField(
+              style: TextStyle(
+                color: new Color.fromRGBO(56, 161, 243, 1),
+              ),
+              decoration: InputDecoration(
+                hintText: 'Phone, email, or username',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 17.0),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white38, width: 0.5),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PasswordScreen extends StatelessWidget {
+  const PasswordScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // alignment: Alignment.center,
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+            child: Text(
+              'Enter your password',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 27.0,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Container(
+              child: PasswdTextFormField(
+                  true, 'Password', LoginScreen(0).passController)),
+        ],
       ),
     );
   }
