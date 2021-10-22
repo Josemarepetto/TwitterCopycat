@@ -1,22 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:twitter_copycat/screens/util/passwdtextfield.dart';
+import 'package:get/get.dart';
+import 'package:twitter_copycat/home.dart';
+import 'package:twitter_copycat/models/user.dart';
+
+TextEditingController _usernameController = new TextEditingController();
+TextEditingController _passwordController = new TextEditingController();
 
 // ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
   //const LoginScreen({Key? key}) : super(key: key);
   var selectedPageIndex;
   LoginScreen(this.selectedPageIndex);
-
-  TextEditingController passController = new TextEditingController();
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   var selectedPageIndex = 0;
-  TextEditingController passController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     AppBar appBar = new AppBar(
@@ -81,15 +83,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   onPressed: () {
-                    print(selectedPageIndex);
-                    selectedPageIndex = 1;
-                    setState(() {});
+                    if (selectedPageIndex == 0) {
+                      selectedPageIndex = 1;
+                      setState(() {});
+                    } else {
+                      print(_usernameController.text);
+                      print(_passwordController.text);
+                      loginUser(_usernameController.text,
+                          _passwordController.text, context);
+                    }
                   },
-                  child: Text(
-                    'Next',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w500),
-                  ),
+                  child: selectedPageIndex == 0
+                      ? Text(
+                          'Next',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w500),
+                        )
+                      : Text(
+                          'Log in',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
                 )
               ],
             ),
@@ -107,6 +121,89 @@ class _LoginScreenState extends State<LoginScreen> {
         bottomNavigationBar: bottomNavBar(),
       ),
     );
+  }
+
+  Future<void> loginUser(
+      String username, String password, BuildContext context) async {
+    //String passwd = sha256.convert(utf8.encode(password)).toString();
+    Map<String, dynamic> usuario = new Map<String, dynamic>();
+    String idDoc = '';
+
+    CollectionReference _userFromFirebase =
+        FirebaseFirestore.instance.collection('users');
+    showDialog(
+      context: context,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    await Future<void>.delayed(Duration(seconds: 1));
+
+    QuerySnapshot respuesta = await _userFromFirebase.get();
+
+    if (respuesta.docs.length > 0) {
+      for (var doc in respuesta.docs) {
+        if ((GetUtils.isNumericOnly(username) &&
+                username.length == 9 &&
+                doc.data()['phone'] == username) ||
+            (GetUtils.isEmail(username) && doc.data()['email'] == username) ||
+            username == doc.data()['username']) {
+          usuario = doc.data();
+          idDoc = doc.id;
+        }
+      }
+      if (idDoc != '') {
+        if (usuario['password'] == password) {
+          currentUser = new User('Jose Repetto', usuario['username'],
+              usuario['imageURL'], '100', '150');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(),
+            ),
+          );
+        } else {
+          Navigator.of(context).pop();
+          if (usuario['password'] != password) {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: Text('Error!'),
+                content: Text('Contraseña incorrecta!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Aceptar'),
+                  )
+                ],
+                elevation: 20.0,
+              ),
+            );
+          }
+        }
+      } else {
+        Navigator.of(context).pop();
+
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text('Error!'),
+            content: Text('Usuario no existe!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Aceptar'),
+              )
+            ],
+            elevation: 20.0,
+          ),
+        );
+      }
+    }
   }
 }
 
@@ -137,6 +234,7 @@ class UsernameScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
             child: TextField(
+              controller: _usernameController,
               style: TextStyle(
                 color: new Color.fromRGBO(56, 161, 243, 1),
               ),
@@ -151,6 +249,9 @@ class UsernameScreen extends StatelessWidget {
                       color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
                 ),
               ),
+              onChanged: (value) {
+                print(_usernameController.text);
+              },
             ),
           ),
         ],
@@ -160,7 +261,7 @@ class UsernameScreen extends StatelessWidget {
 }
 
 class PasswordScreen extends StatelessWidget {
-  const PasswordScreen({Key? key}) : super(key: key);
+  PasswordScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -184,8 +285,28 @@ class PasswordScreen extends StatelessWidget {
             ),
           ),
           Container(
-              child: PasswdTextFormField(
-                  true, 'Password', LoginScreen(0).passController)),
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+            child: TextField(
+              controller: _passwordController,
+              style: TextStyle(
+                color: new Color.fromRGBO(56, 161, 243, 1),
+              ),
+              decoration: InputDecoration(
+                hintText: 'Password',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 17.0),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white38, width: 0.5),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
+                ),
+              ),
+              onChanged: (value) {
+                print(_passwordController.text);
+              },
+            ),
+          ),
         ],
       ),
     );

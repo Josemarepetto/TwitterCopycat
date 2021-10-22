@@ -1,9 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:twitter_copycat/home.dart';
-import 'package:twitter_copycat/screens/login.dart';
 import 'package:twitter_copycat/screens/register.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(Twitter());
 }
 
@@ -20,8 +21,6 @@ class Twitter extends StatelessWidget {
         floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: new Color.fromRGBO(56, 161, 243, 1)),
       ),
-      // home: Home(),
-      // home: LoginScreen(),
       home: InitialScreen(0),
     );
   }

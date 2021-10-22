@@ -1,7 +1,14 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter_copycat/home.dart';
 import 'package:twitter_copycat/screens/login.dart';
+
+TextEditingController _nameController = new TextEditingController();
+TextEditingController _phoneOrEmailController = new TextEditingController();
+TextEditingController _dateOfBirthController = new TextEditingController();
+TextEditingController _passwdController = new TextEditingController();
 
 // ignore: must_be_immutable
 class InitialScreen extends StatefulWidget {
@@ -14,7 +21,6 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
-  TextEditingController passController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     AppBar appBar = new AppBar(
@@ -102,16 +108,25 @@ class _InitialScreenState extends State<InitialScreen> {
                             ),
                           ),
                           onPressed: () {
-                            // print(selectedPageIndex);
-                            // selectedPageIndex = 1;
-                            // setState(() {});
+                            if (this.widget.selectedPageIndex == 1) {
+                              this.widget.selectedPageIndex = 2;
+                              setState(() {});
+                            } else
+                              registerUser();
                           },
-                          child: Text(
-                            'Next',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          child: this.widget.selectedPageIndex == 1
+                              ? Text(
+                                  'Next',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                )
+                              : Text(
+                                  'Register',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                ),
                         ),
                 ),
               ],
@@ -121,7 +136,11 @@ class _InitialScreenState extends State<InitialScreen> {
       );
     }
 
-    List<Widget> screens = [new FirstScreen(), new RegisterScreen()];
+    List<Widget> screens = [
+      new FirstScreen(),
+      new RegisterScreen(),
+      new PasswordScreen()
+    ];
 
     return SafeArea(
       child: Scaffold(
@@ -130,6 +149,38 @@ class _InitialScreenState extends State<InitialScreen> {
         bottomNavigationBar: bottomNavBar(),
       ),
     );
+  }
+
+  Future<void> registerUser() async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    await Future<void>.delayed(Duration(seconds: 1));
+
+    Map<String, dynamic> nuevoUsuario = {
+      'username': _phoneOrEmailController.text,
+      'name': _nameController.text,
+      'password': _passwdController.text,
+      'imageURL':
+          'https://meetanentrepreneur.lu/wp-content/uploads/2019/08/profil-linkedin.jpg'
+    };
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .add(nuevoUsuario)
+        .then((value) {
+      print('Usuario creado');
+    }).whenComplete(() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => InitialScreen(0),
+        ),
+      );
+    });
   }
 }
 
@@ -345,6 +396,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding:
                         EdgeInsets.only(left: 35.0, right: 35.0, bottom: 40.0),
                     child: TextField(
+                      controller: _nameController,
                       style: TextStyle(
                         color: new Color.fromRGBO(56, 161, 243, 1),
                       ),
@@ -368,6 +420,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     padding:
                         EdgeInsets.only(left: 35.0, right: 35.0, bottom: 15.0),
                     child: TextField(
+                      controller: _phoneOrEmailController,
                       style: TextStyle(
                         color: new Color.fromRGBO(56, 161, 243, 1),
                       ),
@@ -390,6 +443,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 35.0, right: 35.0),
                     child: TextField(
+                      controller: _dateOfBirthController,
                       style: TextStyle(
                         color: new Color.fromRGBO(56, 161, 243, 1),
                       ),
@@ -417,6 +471,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
             flex: 1,
             child: SizedBox(),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class PasswordScreen extends StatelessWidget {
+  PasswordScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+            child: Text(
+              'Create a password',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 27.0,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+            child: TextField(
+              obscureText: true,
+              controller: _passwdController,
+              style: TextStyle(
+                color: new Color.fromRGBO(56, 161, 243, 1),
+              ),
+              decoration: InputDecoration(
+                hintText: 'Password',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 17.0),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white38, width: 0.5),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
+                ),
+              ),
+              onChanged: (value) {
+                print(_passwdController.text);
+              },
+            ),
+          ),
         ],
       ),
     );
