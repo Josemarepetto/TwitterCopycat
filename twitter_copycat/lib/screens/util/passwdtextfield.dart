@@ -7,8 +7,9 @@ class PasswdTextFormField extends StatefulWidget {
   bool _ocultarPasswd;
   String _textoLabel;
   TextEditingController _passwdController;
-  PasswdTextFormField(
-      this._ocultarPasswd, this._textoLabel, this._passwdController);
+  final Function(String) pruebaCallback;
+  PasswdTextFormField(this._ocultarPasswd, this._textoLabel,
+      this._passwdController, this.pruebaCallback);
 
   @override
   _PasswdTextFormFieldState createState() => _PasswdTextFormFieldState();
