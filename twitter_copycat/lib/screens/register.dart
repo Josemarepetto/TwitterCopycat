@@ -72,7 +72,8 @@ class _InitialScreenState extends State<InitialScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0),
+            padding: EdgeInsets.only(
+                left: 20.0, right: 20.0, top: 40.0, bottom: 10.0),
             color: Colors.black,
             child: Row(
               mainAxisAlignment: this.widget.selectedPageIndex == 0
