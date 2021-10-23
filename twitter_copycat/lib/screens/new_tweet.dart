@@ -69,13 +69,13 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
       ),
     );
   }
-
-  void shareNewTweet() {
+void shareNewTweet() {
+    Random r = new Random();
     Map<String, dynamic> newTweet = {
-      'comments': '23',
+      'comments': r.nextInt(100).toString(),
       'imageURL': '',
-      'likes': '23',
-      'retweets': '23',
+      'likes': r.nextInt(100).toString(),
+      'retweets': r.nextInt(100).toString(),
       'text': _tweetTextController.text,
       'time': DateTime.now().toString(),
       'user': currentUser.getName(),
