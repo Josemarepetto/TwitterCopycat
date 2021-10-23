@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/get_utils/get_utils.dart';
 import 'package:twitter_copycat/models/user.dart';
 
 TextEditingController _tweetTextController = new TextEditingController();
@@ -69,7 +71,20 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
       ),
     );
   }
-void shareNewTweet() {
+
+  String getUsername() {
+    String _username = '';
+    if ((GetUtils.isNumericOnly(currentUser.getUserName()) &&
+            currentUser.getUserName().length == 9) ||
+        GetUtils.isEmail(currentUser.getUserName())) {
+      _username = '@${currentUser.getName().toLowerCase().replaceAll(' ', '')}';
+    } else
+      _username = currentUser.getUserName();
+
+    return _username;
+  }
+
+  void shareNewTweet() {
     Random r = new Random();
     Map<String, dynamic> newTweet = {
       'comments': r.nextInt(100).toString(),
@@ -79,7 +94,7 @@ void shareNewTweet() {
       'text': _tweetTextController.text,
       'time': DateTime.now().toString(),
       'user': currentUser.getName(),
-      'userName': currentUser.getUserName(),
+      'userName': getUsername(),
       'userProfilePicture': currentUser.getPictureURL(),
     };
 
