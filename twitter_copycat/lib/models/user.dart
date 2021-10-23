@@ -57,9 +57,9 @@ class User {
 User currentUser = new User('', '', '', '', '');
 
 List<String> profilePictures = [
-  'http://cemokalab.com/wp-content/uploads/2015/07/avatar-372-456324.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/mujer-avatar.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/mujer-avatar-2.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/hombre-avatar-3.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/hombre-avatar-5.png',
+'https://pbs.twimg.com/media/DmBx812U4AEWPmW.jpg',
+'https://pbs.twimg.com/media/D2psc0UWoAEu8SC?format=jpg&name=small',
+'https://pbs.twimg.com/media/Dz2EMDPXQAEgJkE?format=jpg&name=small',
+'https://lh3.googleusercontent.com/proxy/csnaColBsvdHgEuyE4IptKaKQ3sDAqOWSwoC_tdXflSTCbAkbyIFdcRFvtUCrEPLZVhi9Ndk0oypgFye6M7P-1hkRABwF8wVq7VqVUI_bNNYRLQJOg0QvLlf3GOmQF5-H6CEJCPA4_rSGcAdIxtHqA',
+'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBd1gAqnwG4nJe-ZoluW8W0NDgZKO7Mbc7f_NB2aAfWbORL7SAURzcLaUYkw1drbLXcc4&usqp=CAU',
 ];
