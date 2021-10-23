@@ -258,9 +258,6 @@ class UsernameScreen extends StatelessWidget {
                       color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
                 ),
               ),
-              onChanged: (value) {
-                print(_usernameController.text);
-              },
             ),
           ),
         ],
@@ -312,9 +309,6 @@ class PasswordScreen extends StatelessWidget {
                       color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
                 ),
               ),
-              onChanged: (value) {
-                print(_passwordController.text);
-              },
             ),
           ),
         ],
