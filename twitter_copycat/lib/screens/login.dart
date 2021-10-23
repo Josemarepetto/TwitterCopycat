@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:twitter_copycat/home.dart';
 import 'package:twitter_copycat/models/user.dart';
 
@@ -18,6 +17,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  void resetControllers() {
+    _usernameController = new TextEditingController();
+    _passwordController = new TextEditingController();
+  }
+
   var selectedPageIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           IconButton(
             onPressed: () {
+              resetControllers();
               Navigator.of(context).pop();
             },
             icon: Icon(
@@ -87,8 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       selectedPageIndex = 1;
                       setState(() {});
                     } else {
-                      print(_usernameController.text);
-                      print(_passwordController.text);
                       loginUser(_usernameController.text,
                           _passwordController.text, context);
                     }
@@ -115,10 +118,18 @@ class _LoginScreenState extends State<LoginScreen> {
     List<Widget> screens = [new UsernameScreen(), new PasswordScreen()];
 
     return SafeArea(
-      child: Scaffold(
-        appBar: appBar,
-        body: screens.elementAt(selectedPageIndex),
-        bottomNavigationBar: bottomNavBar(),
+      child: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          appBar: appBar,
+          body: screens.elementAt(selectedPageIndex),
+          bottomNavigationBar: bottomNavBar(),
+        ),
       ),
     );
   }
@@ -143,24 +154,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (respuesta.docs.length > 0) {
       for (var doc in respuesta.docs) {
-        if ((GetUtils.isNumericOnly(username) &&
-                username.length == 9 &&
-                doc.data()['phone'] == username) ||
-            (GetUtils.isEmail(username) && doc.data()['email'] == username) ||
-            username == doc.data()['username']) {
+        if (username == doc.data()['username']) {
           usuario = doc.data();
           idDoc = doc.id;
         }
       }
       if (idDoc != '') {
         if (usuario['password'] == password) {
-          currentUser = new User('Jose Repetto', usuario['username'],
-              usuario['imageURL'], '100', '150');
-          Navigator.push(
+          currentUser = new User(usuario['name'], usuario['username'],
+              usuario['imageURL'], usuario['followers'], usuario['following']);
+          resetControllers();
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => Home(),
             ),
+            (route) => false,
           );
         } else {
           Navigator.of(context).pop();
@@ -287,6 +296,7 @@ class PasswordScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
             child: TextField(
+              obscureText: true,
               controller: _passwordController,
               style: TextStyle(
                 color: new Color.fromRGBO(56, 161, 243, 1),

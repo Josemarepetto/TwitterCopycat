@@ -54,9 +54,12 @@ class User {
   }
 }
 
-User currentUser = new User(
-    'José Repetto',
-    '@joserepettorav',
-    'https://media-exp1.licdn.com/dms/image/C4E03AQH68BIYeHMz2Q/profile-displayphoto-shrink_800_800/0/1542082157831?e=1639612800&v=beta&t=K1IgyoEPrb76Zh0iYX9zOzuem4qlhUfj-TMDJuQWSV4',
-    '125',
-    '130');
+User currentUser = new User('', '', '', '', '');
+
+List<String> profilePictures = [
+  'http://cemokalab.com/wp-content/uploads/2015/07/avatar-372-456324.png',
+  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/mujer-avatar.png',
+  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/mujer-avatar-2.png',
+  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/hombre-avatar-3.png',
+  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/hombre-avatar-5.png',
+];

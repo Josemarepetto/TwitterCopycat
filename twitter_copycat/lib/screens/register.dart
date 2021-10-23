@@ -1,8 +1,9 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:twitter_copycat/home.dart';
+import 'package:twitter_copycat/models/user.dart';
 import 'package:twitter_copycat/screens/login.dart';
 
 TextEditingController _nameController = new TextEditingController();
@@ -21,6 +22,13 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+  void resetControllers() {
+    _nameController = new TextEditingController();
+    _phoneOrEmailController = new TextEditingController();
+    _dateOfBirthController = new TextEditingController();
+    _passwdController = new TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     AppBar appBar = new AppBar(
@@ -42,6 +50,7 @@ class _InitialScreenState extends State<InitialScreen> {
               children: [
                 IconButton(
                   onPressed: () {
+                    resetControllers();
                     Navigator.of(context).pop();
                   },
                   icon: Icon(
@@ -63,7 +72,7 @@ class _InitialScreenState extends State<InitialScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0),
             color: Colors.black,
             child: Row(
               mainAxisAlignment: this.widget.selectedPageIndex == 0
@@ -73,7 +82,7 @@ class _InitialScreenState extends State<InitialScreen> {
                 Container(
                   child: this.widget.selectedPageIndex == 0
                       ? Text(
-                          'Have an account already?',
+                          'Have an account already? ',
                           style: TextStyle(color: Colors.white, fontSize: 12.0),
                         )
                       : SizedBox(),
@@ -81,6 +90,12 @@ class _InitialScreenState extends State<InitialScreen> {
                 Container(
                   child: this.widget.selectedPageIndex == 0
                       ? TextButton(
+                          style: TextButton.styleFrom(
+                            minimumSize: Size.zero,
+                            padding: EdgeInsets.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            alignment: Alignment.centerLeft,
+                          ),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -143,15 +158,24 @@ class _InitialScreenState extends State<InitialScreen> {
     ];
 
     return SafeArea(
-      child: Scaffold(
-        appBar: appBar,
-        body: screens.elementAt(this.widget.selectedPageIndex),
-        bottomNavigationBar: bottomNavBar(),
+      child: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          appBar: appBar,
+          body: screens.elementAt(this.widget.selectedPageIndex),
+          bottomNavigationBar: bottomNavBar(),
+        ),
       ),
     );
   }
 
   Future<void> registerUser() async {
+    Random r = new Random();
     showDialog(
       context: context,
       builder: (context) => Center(
@@ -164,8 +188,11 @@ class _InitialScreenState extends State<InitialScreen> {
       'username': _phoneOrEmailController.text,
       'name': _nameController.text,
       'password': _passwdController.text,
-      'imageURL':
-          'https://meetanentrepreneur.lu/wp-content/uploads/2019/08/profil-linkedin.jpg'
+      'imageURL': profilePictures.elementAt(
+        r.nextInt(profilePictures.length - 1),
+      ),
+      'followers': r.nextInt(1000).toString(),
+      'following': r.nextInt(1000).toString()
     };
 
     FirebaseFirestore.instance
@@ -174,11 +201,13 @@ class _InitialScreenState extends State<InitialScreen> {
         .then((value) {
       print('Usuario creado');
     }).whenComplete(() {
-      Navigator.push(
+      resetControllers();
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => InitialScreen(0),
         ),
+        (route) => false,
       );
     });
   }
@@ -232,10 +261,25 @@ class _FirstScreenState extends State<FirstScreen> {
                     ),
                   ),
                   onPressed: () {},
-                  child: Text(
-                    'Sign in with Google',
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w500),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.03,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              'https://i.pinimg.com/originals/c9/b1/6e/c9b16eceedd12986cd5b762474103507.webp'),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      Text(
+                        'Sign in with Google',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -308,39 +352,57 @@ class _FirstScreenState extends State<FirstScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      'By signing, you agree to our',
-                      style: TextStyle(color: Colors.white, fontSize: 10.0),
+                      'By signing, you agree to our ',
+                      style: TextStyle(color: Colors.white, fontSize: 11.0),
                     ),
                     TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          alignment: Alignment.centerLeft,
+                        ),
                         onPressed: () {},
                         child: Text(
                           'Terms',
                           style: TextStyle(
                               color: new Color.fromRGBO(56, 161, 243, 1),
-                              fontSize: 10.0),
+                              fontSize: 11.0),
                         )),
                     Text(
                       ',',
-                      style: TextStyle(color: Colors.white, fontSize: 10.0),
+                      style: TextStyle(color: Colors.white, fontSize: 11.0),
                     ),
                     TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        alignment: Alignment.centerLeft,
+                      ),
                       onPressed: () {},
                       child: Text(
                         'Privacy Policy',
                         style: TextStyle(
                             color: new Color.fromRGBO(56, 161, 243, 1),
-                            fontSize: 10.0),
+                            fontSize: 11.0),
                       ),
                     ),
-                    Text(', and',
-                        style: TextStyle(color: Colors.white, fontSize: 10.0)),
+                    Text(', and ',
+                        style: TextStyle(color: Colors.white, fontSize: 11.0)),
                     TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        alignment: Alignment.centerLeft,
+                      ),
                       onPressed: () {},
                       child: Text(
                         'Cookie Use',
                         style: TextStyle(
                             color: new Color.fromRGBO(56, 161, 243, 1),
-                            fontSize: 10.0),
+                            fontSize: 11.0),
                       ),
                     ),
                   ],
@@ -443,6 +505,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 35.0, right: 35.0),
                     child: TextField(
+                      keyboardType: TextInputType.datetime,
                       controller: _dateOfBirthController,
                       style: TextStyle(
                         color: new Color.fromRGBO(56, 161, 243, 1),
@@ -519,9 +582,6 @@ class PasswordScreen extends StatelessWidget {
                       color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
                 ),
               ),
-              onChanged: (value) {
-                print(_passwdController.text);
-              },
             ),
           ),
         ],

@@ -16,7 +16,10 @@ class _TweetsState extends State<TweetsScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.0),
       child: StreamBuilder<QuerySnapshot>(
-        stream: db.collection('tweets').snapshots(),
+        stream: db
+            .collection('tweets')
+            .orderBy('time', descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -26,14 +29,17 @@ class _TweetsState extends State<TweetsScreen> {
             return ListView(
               children: snapshot.data!.docs.map((doc) {
                 return Container(
-                    child: new Tweet(
-                        doc.data()['user'],
-                        doc.data()['text'],
-                        doc.data()['imageURL'],
-                        doc.data()['time'],
-                        doc.data()['comments'],
-                        doc.data()['likes'],
-                        doc.data()['retweets']));
+                  child: new Tweet(
+                      doc.data()['user'],
+                      doc.data()['userName'],
+                      doc.data()['userProfilePicture'],
+                      doc.data()['text'],
+                      doc.data()['imageURL'],
+                      doc.data()['time'],
+                      doc.data()['comments'],
+                      doc.data()['likes'],
+                      doc.data()['retweets']),
+                );
               }).toList(),
             );
         },
@@ -43,8 +49,10 @@ class _TweetsState extends State<TweetsScreen> {
 }
 
 // ignore: must_be_immutable
-class Tweet extends StatelessWidget {
+class Tweet extends StatefulWidget {
   String _user;
+  String _userName;
+  String _userProfilePicture;
   String _text;
   String _imageURL;
   String _time;
@@ -52,30 +60,33 @@ class Tweet extends StatelessWidget {
   String _likes;
   String _retweets;
 
-  Tweet(this._user, this._text, this._imageURL, this._time, this._comments,
-      this._likes, this._retweets);
+  Tweet(this._user, this._userName, this._userProfilePicture, this._text,
+      this._imageURL, this._time, this._comments, this._likes, this._retweets);
 
-  CollectionReference _userFromFirebase =
-      FirebaseFirestore.instance.collection('users');
+  @override
+  _TweetState createState() => _TweetState();
+}
+
+class _TweetState extends State<Tweet> {
+  String calculateTime() {
+    if (DateTime.now().difference(DateTime.parse(widget._time)).inMinutes >
+            60 &&
+        DateTime.now().difference(DateTime.parse(widget._time)).inHours < 24) {
+      return ' ${DateTime.now().difference(DateTime.parse(widget._time)).inHours}h';
+    } else if (DateTime.now().difference(DateTime.parse(widget._time)).inHours >
+        24) {
+      return ' ${DateTime.now().difference(DateTime.parse(widget._time)).inDays}d';
+    } else if (DateTime.now()
+            .difference(DateTime.parse(widget._time))
+            .inSeconds >
+        60) {
+      return ' ${DateTime.now().difference(DateTime.parse(widget._time)).inMinutes}min';
+    } else
+      return ' ${DateTime.now().difference(DateTime.parse(widget._time)).inSeconds}s';
+  }
 
   @override
   Widget build(BuildContext context) {
-    String _userImage = '';
-
-    Future<void> getUserImage(String username) async {
-      QuerySnapshot respuesta = await _userFromFirebase.get();
-
-      if (respuesta.docs.length > 0) {
-        for (var doc in respuesta.docs) {
-          if (username == doc.data()['username']) {
-            _userImage = doc.data()['imageURL'];
-          }
-        }
-      }
-    }
-
-    getUserImage(_user);
-
     return Column(
       children: <Widget>[
         Padding(
@@ -90,7 +101,7 @@ class Tweet extends StatelessWidget {
                   height: 50.0,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(25.0),
-                    child: Image.network(_userImage),
+                    child: Image.network(widget._userProfilePicture),
                   ),
                 ),
               ),
@@ -98,6 +109,7 @@ class Tweet extends StatelessWidget {
                 flex: 5,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(top: 4.0),
@@ -110,21 +122,21 @@ class Tweet extends StatelessWidget {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: _user,
+                                      text: widget._user,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 17.0,
                                           color: Colors.black),
                                     ),
                                     TextSpan(
-                                      text: ' ' + _user,
+                                      text: ' ' + widget._userName,
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.grey,
                                       ),
                                     ),
                                     TextSpan(
-                                      text: ' $_time' + 'h',
+                                      text: calculateTime(),
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.grey,
@@ -149,7 +161,7 @@ class Tweet extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 4.0),
                       child: Text(
-                        _text,
+                        widget._text,
                         style: TextStyle(fontSize: 15.0),
                       ),
                     ),
@@ -157,7 +169,9 @@ class Tweet extends StatelessWidget {
                       padding:
                           EdgeInsets.only(top: 4.0, bottom: 4.0, right: 5.0),
                       child: ClipRRect(
-                        child: Image.network(_imageURL),
+                        child: widget._imageURL == ''
+                            ? SizedBox()
+                            : Image.network(widget._imageURL),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
@@ -176,7 +190,7 @@ class Tweet extends StatelessWidget {
                                 size: 16.0,
                               ),
                               Text(
-                                '  ' + _comments,
+                                '  ' + widget._comments,
                                 style: TextStyle(color: Colors.grey),
                               )
                             ],
@@ -190,7 +204,7 @@ class Tweet extends StatelessWidget {
                                 size: 16.0,
                               ),
                               Text(
-                                '  ' + _retweets,
+                                '  ' + widget._retweets,
                                 style: TextStyle(color: Colors.grey),
                               )
                             ],
@@ -204,7 +218,7 @@ class Tweet extends StatelessWidget {
                                 size: 16.0,
                               ),
                               Text(
-                                '  ' + _likes,
+                                '  ' + widget._likes,
                                 style: TextStyle(color: Colors.grey),
                               )
                             ],
