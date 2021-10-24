@@ -57,9 +57,11 @@ class User {
 User currentUser = new User('', '', '', '', '');
 
 List<String> profilePictures = [
-  'http://cemokalab.com/wp-content/uploads/2015/07/avatar-372-456324.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/mujer-avatar.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/mujer-avatar-2.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/hombre-avatar-3.png',
-  'https://www.dralejandroreynoso.com.mx/wp-content/uploads/2021/08/hombre-avatar-5.png',
+  'https://cdn-icons-png.flaticon.com/512/168/168734.png',
+  'https://cdn-icons-png.flaticon.com/512/147/147144.png',
+  'https://cdn-icons.flaticon.com/png/512/147/premium/147129.png?token=exp=1635100825~hmac=161eabdd049a52fa7cca9ad2927b830e',
+  'https://cdn-icons-png.flaticon.com/512/168/168719.png',
+  'https://cdn-icons-png.flaticon.com/512/168/168722.png',
+  'https://cdn-icons-png.flaticon.com/512/168/168726.png',
+  'https://cdn-icons.flaticon.com/png/512/147/premium/147136.png?token=exp=1635100915~hmac=50717a5251df5eb2bc2c91fc81fdffde',
 ];
