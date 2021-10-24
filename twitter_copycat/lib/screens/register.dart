@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter_copycat/models/user.dart';
 import 'package:twitter_copycat/screens/login.dart';
@@ -268,8 +269,10 @@ class _FirstScreenState extends State<FirstScreen> {
                       Container(
                         height: MediaQuery.of(context).size.height * 0.03,
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://i.pinimg.com/originals/c9/b1/6e/c9b16eceedd12986cd5b762474103507.webp'),
+                          child: SvgPicture.asset(
+                            "assets/icons/svg/google-logo.svg",
+                            height: 24.0,
+                          ),
                         ),
                       ),
                       SizedBox(

@@ -1,10 +1,12 @@
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/get_utils/get_utils.dart';
 import 'package:twitter_copycat/models/user.dart';
 
 TextEditingController _tweetTextController = new TextEditingController();
+TextEditingController _tweetImageURLController = new TextEditingController();
 
 class NewTweetScreen extends StatefulWidget {
   const NewTweetScreen({Key? key}) : super(key: key);
@@ -88,7 +90,9 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
     Random r = new Random();
     Map<String, dynamic> newTweet = {
       'comments': r.nextInt(100).toString(),
-      'imageURL': '',
+      'imageURL': _tweetImageURLController.text.length == 0
+          ? ''
+          : _tweetImageURLController.text,
       'likes': r.nextInt(100).toString(),
       'retweets': r.nextInt(100).toString(),
       'text': _tweetTextController.text,
@@ -103,6 +107,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
         .add(newTweet)
         .whenComplete(() {
       _tweetTextController = new TextEditingController();
+      _tweetImageURLController = new TextEditingController();
       Navigator.of(context).pop();
     });
   }
@@ -166,6 +171,27 @@ class WriteNewTweet extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 30.0, right: 15.0, top: 20.0),
+            child: TextField(
+              autofocus: true,
+              controller: _tweetImageURLController,
+              style: TextStyle(
+                color: new Color.fromRGBO(56, 161, 243, 1),
+              ),
+              decoration: InputDecoration(
+                hintText: 'Picture URL (optional)',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 17.0),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white38, width: 0.5),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: new Color.fromRGBO(56, 161, 243, 1), width: 1.0),
+                ),
+              ),
             ),
           ),
         ],
