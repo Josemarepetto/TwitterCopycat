@@ -128,8 +128,14 @@ class _InitialScreenState extends State<InitialScreen> {
                             if (this.widget.selectedPageIndex == 1) {
                               this.widget.selectedPageIndex = 2;
                               setState(() {});
-                            } else
-                              registerUser();
+                            } else {
+                              if (_nameController.text == '' &&
+                                  _phoneOrEmailController.text == '' &&
+                                  _passwdController.text == '')
+                                Navigator.of(context).pop();
+                              else
+                                registerUser();
+                            }
                           },
                           child: this.widget.selectedPageIndex == 1
                               ? Text(
