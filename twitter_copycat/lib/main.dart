@@ -13,7 +13,7 @@ class Twitter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Twitter Copycat Test!',
+      title: 'Twitter Copycat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.white,
